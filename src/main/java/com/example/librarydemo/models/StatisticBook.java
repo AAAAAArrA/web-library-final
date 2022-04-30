@@ -5,30 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Date;
 
-@Data
 @Entity
-@Table(name="taken")
+@Table(name="statistic_book")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Taken {
+public class StatisticBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Date startDate;
-    private Date endDate;
-
-    @ManyToOne
-    @JoinColumn(name="student_id")
-    private User studentId;
+    private int takenQuantity;
 
     @ManyToOne
     @JoinColumn(name="book_id")
-    private Book book;
-
-    @ManyToOne
-    @JoinColumn(name="librarian_id")
-    private User librarianId;
-
+    private Book bookId;
 }

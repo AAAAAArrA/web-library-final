@@ -10,31 +10,23 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="book")
+@Table(name="category")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
-    private String author;
-    private boolean inLibrary;
-    private String description;
-    private int releaseYear;
+    private String category;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "book")
-    private List<Taken> takenBooks;
+    @OneToMany(mappedBy = "category")
+    private List<Book> books;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "bookId")
-    private List<StatisticBook> statisticBooks;
 
+    @OneToMany(mappedBy = "category")
+    private List<EBook> books1;
 
-    @ManyToOne
-    @JoinColumn
-    private Category category;
 }
-

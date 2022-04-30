@@ -6,20 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
-@Data
 @Entity
-@Table(name="role")
+@Table(name="statistic_e_book")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class StatisticEBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String role;
+    private int id;
+    private int downloadedQuantity;
+    private int viewedQuantity;
 
-    @OneToMany(mappedBy = "role_id")
-    private List<User> user_name;
-
+    @ManyToOne
+    @JoinColumn(name="e_book_id")
+    private EBook eBookId;
 }

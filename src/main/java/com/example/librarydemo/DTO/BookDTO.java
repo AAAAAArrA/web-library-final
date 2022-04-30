@@ -1,18 +1,21 @@
 package com.example.librarydemo.DTO;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TakenDTO {
-    private Date startDate;
-    private String studentInfo;
-    private String bookInfo;
+public class BookDTO {
+     int id;
+     String name;
+     String author;
+     String description;
+     String photo;
+     int releaseYear;
+     String category;
+
 
 }

@@ -10,7 +10,7 @@ public class CommonFunc {
 
     public static Date getCurrentDate() throws ParseException {
         long millis=System.currentTimeMillis();
-        java.sql.Date date=new java.sql.Date(millis);
+        Date date=new Date(millis);
 
         return date;
     }
