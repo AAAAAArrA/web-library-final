@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class StatisticEBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private int downloadedQuantity;
     private int viewedQuantity;
 

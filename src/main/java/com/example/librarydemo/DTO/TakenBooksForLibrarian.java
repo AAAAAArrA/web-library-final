@@ -4,12 +4,12 @@ import java.sql.Date;
 
 
 public interface TakenBooksForLibrarian {
-    int getId();
-    int getBookId();
+    long getId();
+    long getBookId();
     String getBookName();
     String getBookAuthor();
     Date getStartDate();
-    int getStudentId();
+    long getStudentId();
     String getStudentName();
     String getLibrarianName();
 

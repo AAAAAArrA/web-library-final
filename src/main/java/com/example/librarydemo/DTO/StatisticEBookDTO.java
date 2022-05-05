@@ -1,12 +1,14 @@
 package com.example.librarydemo.DTO;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface StatisticEBookDTO {
-    int getId();
-    int getBookId();
+    long getId();
+    long getBookId();
     String getName();
     String getAuthor();
     int getReleaseYear();
-    String getPhoto();
+    MultipartFile getPhoto();
     int getDownloadedQuantity();
     int getViewedQuantity();
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDTO {
-    int id;
+    long id;
     String firstname;
     String lastname;
     String phoneNumber;

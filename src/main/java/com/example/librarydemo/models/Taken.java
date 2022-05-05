@@ -15,7 +15,7 @@ import java.sql.Date;
 public class Taken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private Date startDate;
     private Date endDate;
 
@@ -30,5 +30,4 @@ public class Taken {
     @ManyToOne
     @JoinColumn(name="librarian_id")
     private User librarianId;
-
 }

@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class StatisticBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private int takenQuantity;
 
     @ManyToOne

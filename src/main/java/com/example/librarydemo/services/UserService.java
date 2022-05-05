@@ -3,16 +3,23 @@ package com.example.librarydemo.services;
 
 import com.example.librarydemo.DTO.LibrarianAdminDTO;
 import com.example.librarydemo.DTO.StudentDTO;
+import com.example.librarydemo.enums.Role;
+import com.example.librarydemo.enums.Status;
 import com.example.librarydemo.models.User;
 import com.example.librarydemo.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserService(UserRepository userRepository1) {
         this.userRepository = userRepository1;
@@ -25,7 +32,7 @@ public class UserService {
 
 
     //Достает всю информацию об одном пользователе
-    public User oneUser(int id){
+    public User oneUser(long id){
         return userRepository.findById(id).get();
     }
 
@@ -36,28 +43,30 @@ public class UserService {
     }
 
     //Удаление user не зависимо от его роли
-    public void deleteUser(int id){
+    public void deleteUser(long id){
         userRepository.deleteById(id);
     }
 
+    public User getStudent(long id){
+        return userRepository.getStudent(id);
+    }
+
     //Нахождение user по ID, потом понадобится
-    public User findUserById(Integer id){
+    public User findUserById(Long id){
         return userRepository.findById(id).get();
     }
 
-
-
-
     // Редактирует информацию об определнном студенте
-    public void editStudent(StudentDTO studentDTO){
-        User student = userRepository.getById(studentDTO.getId());
-        student.setFirstname(studentDTO.getFirstname());
-        student.setLastname(studentDTO.getLastname());
-        student.setPhoneNumber(studentDTO.getPhoneNumber());
-        student.setGroupName(studentDTO.getGroup());
-        student.setAddress(studentDTO.getAddress());
-        student.setEmail(studentDTO.getLogin());
-        student.setPassword(studentDTO.getPassword());
+    public void editStudent(User student){
+        String password;
+        if(student.getPassword() == null){
+            password = userRepository.getStudent(student.getId()).getPassword();
+        }else{
+            password = passwordEncoder.encode(student.getPassword());
+        }
+
+        student.setPassword(password);
+
         userRepository.save(student);
 
     }
@@ -71,10 +80,120 @@ public class UserService {
         librarian.setPassword(librarianDTO.getPassword());
     }
 
-    public User createStudent(User user) {
-        user.setEnabled(true);
-        return userRepository.save(user);
+    public List<User> getStudents(){
+        return userRepository.getStudents();
     }
+
+    @Transactional
+    public boolean createStudent(StudentDTO studentDTO) {
+
+
+        if(userRepository.existsEmail(studentDTO.getLogin()) == 1){
+            return false;
+        }
+
+        String encodedPassword = passwordEncoder.encode(studentDTO.getPassword());
+
+        User user = new User();
+
+        user.setLastname(studentDTO.getLastname());
+        user.setFirstname(studentDTO.getFirstname());
+        user.setEmail(studentDTO.getLogin());
+        user.setPassword(encodedPassword);
+        user.setPhoneNumber(studentDTO.getPhoneNumber());
+        user.setAddress(studentDTO.getAddress());
+        user.setGroupName(studentDTO.getGroup());
+
+        user.setEnabled(true);
+        user.setStatus(Status.ACTIVE);
+        User u = userRepository.save(user);
+
+        userRepository.setRole(u.getId(), Role.STUDENT.toString());
+        return true;
+    }
+
+    @Transactional
+    public boolean createAdmin(StudentDTO studentDTO) {
+
+
+        if(userRepository.existsEmail(studentDTO.getLogin()) == 1){
+            return false;
+        }
+        String encodedPassword = passwordEncoder.encode(studentDTO.getPassword());
+
+        User user = new User();
+
+        user.setLastname(studentDTO.getLastname());
+        user.setFirstname(studentDTO.getFirstname());
+        user.setEmail(studentDTO.getLogin());
+        user.setPassword(encodedPassword);
+        user.setPhoneNumber(studentDTO.getPhoneNumber());
+        user.setAddress(studentDTO.getAddress());
+
+        user.setEnabled(true);
+        user.setStatus(Status.ACTIVE);
+        User u = userRepository.save(user);
+
+        userRepository.setRole(u.getId(), Role.ADMIN.toString());
+        return true;
+    }
+
+    @Transactional
+    public boolean createLibrarian(StudentDTO studentDTO) {
+
+
+        if(userRepository.existsEmail(studentDTO.getLogin()) == 1){
+            return false;
+        }
+
+        String encodedPassword = passwordEncoder.encode(studentDTO.getPassword());
+
+        User user = new User();
+
+        user.setLastname(studentDTO.getLastname());
+        user.setFirstname(studentDTO.getFirstname());
+        user.setEmail(studentDTO.getLogin());
+        user.setPassword(encodedPassword);
+        user.setPhoneNumber(studentDTO.getPhoneNumber());
+        user.setAddress(studentDTO.getAddress());
+
+        user.setEnabled(true);
+        user.setStatus(Status.ACTIVE);
+        User u = userRepository.save(user);
+
+        userRepository.setRole(u.getId(), Role.LIBRARIAN.toString());
+        return true;
+    }
+
+
+
+
+    //Создание Библиотекаря и Админа
+//    public ResponseMessage createLibrarianOrAdmin(User worker){
+//        if(!userRepository.existsUserByFirstnameAndLastname(worker.getFirstname(), worker.getLastname())){
+//            worker.setEmail(worker.getEmail());
+//            worker.setPassword(worker.getPassword());
+//            worker.setFirstname(worker.getFirstname());
+//            worker.setLastname(worker.getLastname());
+//            worker.setPhoneNumber(worker.getPhoneNumber());
+//            worker.setAddress(worker.getAddress());
+//            worker.setRole(worker.getRole());
+//            worker.setEnabled(true);
+//            userRepository.save(worker);
+//            return new ResponseMessage("Librarian successfully added");
+//
+//        }return new ResponseMessage("хрен там, ошибка");
+//    }
+
+
+    //        User student = new User();
+//        student.setFirstname(studentDTO.getFirstname());
+//        student.setLastname(studentDTO.getLastname());
+//        student.setGroupName(studentDTO.getGroup());
+//        student.setPhoneNumber(studentDTO.getPhoneNumber());
+//        student.setAddress(studentDTO.getAddress());
+//        student.setEmail(studentDTO.getLogin());
+//        student.setPassword(studentDTO.getPassword());
 
 
 //
@@ -177,31 +296,5 @@ public class UserService {
 //    }
 
 
-    //Создание Библиотекаря и Админа
-//    public ResponseMessage createLibrarianOrAdmin(User worker){
-//        if(!userRepository.existsUserByFirstnameAndLastname(worker.getFirstname(), worker.getLastname())){
-//            worker.setEmail(worker.getEmail());
-//            worker.setPassword(worker.getPassword());
-//            worker.setFirstname(worker.getFirstname());
-//            worker.setLastname(worker.getLastname());
-//            worker.setPhoneNumber(worker.getPhoneNumber());
-//            worker.setAddress(worker.getAddress());
-//            worker.setRole(worker.getRole());
-//            worker.setEnabled(true);
-//            userRepository.save(worker);
-//            return new ResponseMessage("Librarian successfully added");
-//
-//        }return new ResponseMessage("хрен там, ошибка");
-//    }
-
-
-    //        User student = new User();
-//        student.setFirstname(studentDTO.getFirstname());
-//        student.setLastname(studentDTO.getLastname());
-//        student.setGroupName(studentDTO.getGroup());
-//        student.setPhoneNumber(studentDTO.getPhoneNumber());
-//        student.setAddress(studentDTO.getAddress());
-//        student.setEmail(studentDTO.getLogin());
-//        student.setPassword(studentDTO.getPassword());
 
 }

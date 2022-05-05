@@ -1,6 +1,6 @@
 package com.example.librarydemo.DTO;
 
-
+import com.example.librarydemo.models.Photo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,15 +11,12 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDTO implements Serializable {
-     long id;
-     String name;
-     String author;
-     String description;
-     int releaseYear;
-     String category;
-     String photoName;
-     MultipartFile photo;
-
-
+public class StatisticBookCLassDTO implements Serializable {
+    long id;
+    int takenQuantity;
+    long bookId;
+    String name;
+    String author;
+    int releaseYear;
+    Photo photo;
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LibrarianAdminDTO {
-    int id;
+    long id;
     String firstname;
     String lastname;
     String phoneNumber;

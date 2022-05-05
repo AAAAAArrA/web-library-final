@@ -1,9 +1,7 @@
 package com.example.librarydemo.controllers;
 
-import com.example.librarydemo.DTO.StatisticBookDTO;
-import com.example.librarydemo.DTO.StatisticEBookDTO;
-import com.example.librarydemo.DTO.TakenBooks;
-import com.example.librarydemo.DTO.TakenBooksHistory;
+import com.example.librarydemo.DTO.*;
+import com.example.librarydemo.repository.UserRepository;
 import com.example.librarydemo.services.TakenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +17,29 @@ public class StudentController {
 
     @Autowired
     private TakenService takenService;
+    @Autowired
+    private UserRepository userRepository;
 
-    @GetMapping("/takenBooks")  //ok
+
+
+    @GetMapping("/takenBooks")  //✔
     public ResponseEntity<List<TakenBooks>> getTakenBooks(){
-        return ResponseEntity.ok(takenService.getTakenList(1));
+
+        return ResponseEntity.ok(takenService.getTakenList(userRepository.getUserByUserName(CommonFunc.getCurrentUsersUserName()).getId()));
     }
 
-    @GetMapping("/takenBooksHistory")  //ok
+    @GetMapping("/takenBooksHistory")  //✔
     public ResponseEntity<List<TakenBooksHistory>> getTakenBooksHistory(){
 
-        return ResponseEntity.ok(takenService.getTakenBooksHistory(1));
+        return ResponseEntity.ok(takenService.getTakenBooksHistory(userRepository.getUserByUserName(CommonFunc.getCurrentUsersUserName()).getId()));
     }
 
-    @GetMapping("/topBooks")
-    public ResponseEntity<List<StatisticBookDTO>> getTopBooks(){
+    @GetMapping("/topBooks") //✔
+    public ResponseEntity<List<StatisticBookCLassDTO>> getTopBooks(){
         return ResponseEntity.ok(takenService.getBookStatistic());
     }
 
-    @GetMapping("/topEBooks")
+    @GetMapping("/topEBooks") //
     public ResponseEntity<List<StatisticEBookDTO>> getTopEBooks(){
         return ResponseEntity.ok(takenService.getEBookStatistic());
     }

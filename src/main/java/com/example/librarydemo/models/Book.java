@@ -16,13 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String name;
     private String author;
     private boolean inLibrary;
     private String description;
     private int releaseYear;
+    private boolean deleted;
 
     @JsonIgnore
     @OneToMany(mappedBy = "book")
@@ -32,9 +32,12 @@ public class Book {
     @OneToMany(mappedBy = "bookId")
     private List<StatisticBook> statisticBooks;
 
-
     @ManyToOne
     @JoinColumn
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name="photo_id")
+    private Photo photoId;
 }
 

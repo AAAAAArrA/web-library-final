@@ -25,8 +25,9 @@ public class Category {
     private List<Book> books;
 
     @JsonIgnore
-
     @OneToMany(mappedBy = "category")
     private List<EBook> books1;
+
+
 
 }

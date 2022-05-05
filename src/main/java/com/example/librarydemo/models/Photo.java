@@ -6,31 +6,28 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name="e_book")
+@Table(name="photo")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EBook {
+public class Photo implements Serializable{
+    private static final long serialVersionUID = 2842598520185366295L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String author;
-    private String description;
-    private String photo;
-    private int releaseYear;
-    private String link;
-
-
-    @ManyToOne
-    @JoinColumn
-    private Category category;
+    @Lob
+    private byte[] photo;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "eBookId")
-    private List<StatisticEBook> statisticEBooks;
+    @OneToMany(mappedBy = "photoId")
+    private List<Book> photos;
 }
+
+

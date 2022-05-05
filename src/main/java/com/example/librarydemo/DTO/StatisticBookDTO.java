@@ -1,9 +1,13 @@
 package com.example.librarydemo.DTO;
 
-public interface StatisticBookDTO {
-    int getId();
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.Serializable;
+
+public interface StatisticBookDTO  {
+    long getId();
     int getTakenQuantity();
-    int getBookId();
+    long getBookId();
     String getName();
     String getAuthor();
     int getReleaseYear();

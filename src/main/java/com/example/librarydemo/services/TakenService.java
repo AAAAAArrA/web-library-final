@@ -1,14 +1,17 @@
 package com.example.librarydemo.services;
 
-import com.example.librarydemo.DTO.TakenBooks;
-import com.example.librarydemo.DTO.TakenBooksForLibrarian;
-import com.example.librarydemo.DTO.TakenBooksHistory;
-import com.example.librarydemo.repository.BookRepository;
-import com.example.librarydemo.repository.TakenRepository;
-import com.example.librarydemo.repository.UserRepository;
+import com.example.librarydemo.DTO.*;
+import com.example.librarydemo.exceptions.CustomException;
+import com.example.librarydemo.models.Book;
+import com.example.librarydemo.models.StatisticBook;
+import com.example.librarydemo.models.Taken;
+import com.example.librarydemo.models.User;
+import com.example.librarydemo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,12 +32,15 @@ public class TakenService {
     @Autowired
     StatisticEBookRepository statisticEBookRepository;
 
-    public List<TakenBooks> getTakenList(int student_id){
+    @Autowired
+    PhotoRepository photoRepository;
+
+    public List<TakenBooks> getTakenList(long student_id){
         List<TakenBooks> takenList = (List<TakenBooks>) takenRepository.getTakenBooks(student_id);
         return takenList;
     }
 
-    public List<TakenBooksHistory> getTakenBooksHistory(int student_id){
+    public List<TakenBooksHistory> getTakenBooksHistory(long student_id){
         List<TakenBooksHistory> booksHistories = (List<TakenBooksHistory>) takenRepository.getTakenBooksHistory(student_id);
         return booksHistories;
     }
@@ -47,120 +53,130 @@ public class TakenService {
         return takenRepository.getTakenBooksForLibrarian();
     }
 
-//    public int giveBook(TakenDTO book) throws ParseException, CustomException {
-//
-//        int bookId;
-//        int studentId;
-//
-//        try {
-//            studentId = Integer.parseInt(book.getStudentInfo());
-//        } catch (NumberFormatException nfe) {
-//            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
-//        }
-//
-//        try {
-//            bookId = Integer.parseInt(book.getBookInfo());
-//        } catch (NumberFormatException nfe) {
-//            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
-//        }
-//
-//
-//        if(bookRepository.findById(bookId).get() == null){
-//            return 404;
-//        }
-//        if(userRepository.findById(studentId).get() == null){
-//            return 404;
-//        }
-//
-//
-//
-//        Book b = bookRepository.findById(bookId).get();
-//        User u = userRepository.findById(studentId).get();
-//
-//        if(!(b.isInLibrary())){
-//            return 404;
-//        }
-//        b.setInLibrary(false);
-//
-//
-//        bookRepository.save(b);
-//
-//        book.setStartDate(CommonFunc.getCurrentDate());
-//
-//        Taken taken = new Taken();
-//        taken.setStartDate(book.getStartDate());
-//        taken.setStudentId(u);
-//        taken.setBook(b);
-//        takenRepository.save(taken);
-//
-//
-//
-//        if(statisticBookRepository.getStatisticBookByBookId(bookId) == null){
-//            StatisticBook statisticBook = new StatisticBook();
-//            statisticBook.setBookId(b);
-//            statisticBook.setTakenQuantity(1);
-//            statisticBookRepository.save(statisticBook);
-//
-//        }else{
-//            StatisticBook statisticBook = statisticBookRepository.getStatisticBookByBookId(bookId);
-//            statisticBook.setTakenQuantity(statisticBook.getTakenQuantity() + 1);
-//            statisticBookRepository.save(statisticBook);
-//        }
-//
-//
-//
-//        return 200;
-//    }
-//
-//    public int takeBook(TakenDTO book) throws ParseException, CustomException {
-//
-//        int bookId;
-//        int studentId;
-//
-//        try {
-//            studentId = Integer.parseInt(book.getStudentInfo());
-//        } catch (NumberFormatException nfe) {
-//            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
-//        }
-//
-//        try {
-//            bookId = Integer.parseInt(book.getBookInfo());
-//        } catch (NumberFormatException nfe) {
-//            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
-//        }
-//
-//
-//        if(!(bookRepository.findById(bookId).isPresent())){
-//            return 404;
-//        }
-//        if(!(userRepository.findById(studentId).isPresent())){
-//            return 404;
-//        }
-//
-//
-//
-//        Book b = bookRepository.findById(bookId).get();
-//
-//        if((b.isInLibrary())){
-//            return 404;
-//        }
-//
-//        b.setInLibrary(true);
-//
-//
-//        bookRepository.save(b);
-//
-//
-//        Taken taken = takenRepository.getTakenBook(studentId, bookId);
-//        taken.setEndDate(CommonFunc.getCurrentDate());
-//
-//        takenRepository.save(taken);
-//
-//        return 200;
-//    }
+    public int giveBook(TakenDTO book) throws ParseException, CustomException {
 
-    public List<StatisticBookDTO> getBookStatistic(){
-        return statisticBookRepository.getTopBooks();
+        long bookId;
+        long studentId;
+
+        try {
+            studentId = Integer.parseInt(book.getStudentInfo());
+        } catch (NumberFormatException nfe) {
+            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
+        }
+
+        try {
+            bookId = Integer.parseInt(book.getBookInfo());
+        } catch (NumberFormatException nfe) {
+            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
+        }
+
+
+        if(bookRepository.findById(bookId).get() == null){
+            return 404;
+        }
+        if(userRepository.findById(studentId).get() == null){
+            return 404;
+        }
+
+
+
+        Book b = bookRepository.findById(bookId).get();
+        User u = userRepository.findById(studentId).get();
+
+        if(!(b.isInLibrary())){
+            return 404;
+        }
+        b.setInLibrary(false);
+
+
+        bookRepository.save(b);
+
+        book.setStartDate(CommonFunc.getCurrentDate());
+
+        Taken taken = new Taken();
+        taken.setStartDate(book.getStartDate());
+        taken.setLibrarianId(userRepository.getUserByUserName(CommonFunc.getCurrentUsersUserName()));
+        taken.setStudentId(u);
+        taken.setBook(b);
+        takenRepository.save(taken);
+
+
+
+        if(statisticBookRepository.getStatisticBookByBookId(bookId) == null){
+            StatisticBook statisticBook = new StatisticBook();
+            statisticBook.setBookId(b);
+            statisticBook.setTakenQuantity(1);
+            statisticBookRepository.save(statisticBook);
+
+        }else{
+            StatisticBook statisticBook = statisticBookRepository.getStatisticBookByBookId(bookId);
+            statisticBook.setTakenQuantity(statisticBook.getTakenQuantity() + 1);
+            statisticBookRepository.save(statisticBook);
+        }
+
+
+
+        return 200;
+    }
+
+    public int takeBook(TakenDTO book) throws ParseException, CustomException {
+
+        long bookId;
+        long studentId;
+
+        try {
+            studentId = Integer.parseInt(book.getStudentInfo());
+        } catch (NumberFormatException nfe) {
+            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
+        }
+
+        try {
+            bookId = Integer.parseInt(book.getBookInfo());
+        } catch (NumberFormatException nfe) {
+            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
+        }
+
+
+        if(!(bookRepository.findById(bookId).isPresent())){
+            return 404;
+        }
+        if(!(userRepository.findById(studentId).isPresent())){
+            return 404;
+        }
+
+
+
+        Book b = bookRepository.findById(bookId).get();
+
+        if((b.isInLibrary())){
+            return 404;
+        }
+
+        b.setInLibrary(true);
+
+
+        bookRepository.save(b);
+
+
+        Taken taken = takenRepository.getTakenBook(studentId, bookId);
+        taken.setEndDate(CommonFunc.getCurrentDate());
+
+        takenRepository.save(taken);
+
+        return 200;
+    }
+
+    public List<StatisticBookCLassDTO> getBookStatistic(){
+
+        List<StatisticBookDTO> books =  statisticBookRepository.getTopBooks();
+        List<StatisticBookCLassDTO> bookDTO = new ArrayList<StatisticBookCLassDTO>();
+
+        for(StatisticBookDTO b : books){
+            StatisticBookCLassDTO bDTO = new StatisticBookCLassDTO(b.getId(),b.getTakenQuantity(),b.getBookId(), b.getName(),b.getAuthor(), b.getReleaseYear(), photoRepository.getPhotoByName(b.getPhoto()));
+            bookDTO.add(bDTO);
+        }
+
+        return bookDTO;
     }
 
     public List<StatisticEBookDTO> getEBookStatistic(){
