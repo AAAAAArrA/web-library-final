@@ -27,8 +27,22 @@ public class UserService {
 
     // Достать всех пользователей. Выводит список всех пользователей
     public List<User> UserList(){
-        return userRepository.findAll();
+        return userRepository.getAllUsers();
     }
+
+    public List<User> deletedUserList(){
+        return userRepository.getDeletedUsers();
+    }
+
+    public List<User> getLibrarians(){
+        return userRepository.getLibrarians();
+    }
+    public List<User> getAdmins(){
+        return userRepository.getAdmins();
+    }
+
+
+
 
 
     //Достает всю информацию об одном пользователе
@@ -44,7 +58,7 @@ public class UserService {
 
     //Удаление user не зависимо от его роли
     public void deleteUser(long id){
-        userRepository.deleteById(id);
+        userRepository.deleteUser(id);
     }
 
     public User getStudent(long id){

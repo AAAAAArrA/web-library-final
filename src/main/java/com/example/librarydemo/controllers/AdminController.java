@@ -6,6 +6,7 @@ import com.example.librarydemo.models.User;
 import com.example.librarydemo.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,20 +21,42 @@ public class AdminController {
     }
 
     //Выводит список всех пользователей программы вне зависимости от родей
-    @GetMapping("/all_users")
+    @GetMapping("/users") //✔
     public List<User> listOfUsers(){
         return userService.UserList();
     }
 
+    @GetMapping("/deletedUsers")//✔
+    public List<User> getDeletedUsers(){
+            return userService.deletedUserList();
+        }
+
+
     //Выводит информацию об одном пользователе
-    @GetMapping("/all_users/{id}")
+    @GetMapping("/user/{id}") //✔
     public User getUser(@PathVariable("id") long id){
         return userService.oneUser(id);
     }
 
+    @GetMapping("/students") //✔
+    public List<User> getStudents(){
+        return userService.getStudents();
+    }
+
+    @GetMapping("/librarians") //✔
+    public List<User> getLibrarians(){
+        return userService.getLibrarians();
+    }
+
+    @GetMapping("/admins") //✔
+    public List<User> getAdmins(){
+        return userService.getAdmins();
+    }
+
 
     //Удаление пользователя
-    @DeleteMapping("/delete/{id}")
+    @Transactional
+    @DeleteMapping("/delete/{id}")//✔
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id){
         userService.deleteUser(id);
         return new ResponseEntity<String>("User deleted successfully", HttpStatus.OK);
@@ -46,12 +69,13 @@ public class AdminController {
 
 
     //Создание нового пользователя
-    @PostMapping
+    @Transactional
+    @PostMapping //✔
     public ResponseEntity<User> saveUser(@RequestBody User user){
         return new ResponseEntity<User>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PostMapping("/addStudent")
+    @PostMapping("/addStudent")//✔
     public ResponseEntity addStudent(@RequestBody StudentDTO studentDTO){
         boolean success = userService.createStudent(studentDTO);
 
@@ -62,7 +86,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/addAdmin")
+    @PostMapping("/addAdmin")//✔
     public ResponseEntity addAdmin(@RequestBody StudentDTO studentDTO){
         boolean success = userService.createAdmin(studentDTO);
 
@@ -73,7 +97,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/addLibrarian")
+    @PostMapping("/addLibrarian")//✔
     public ResponseEntity addLibrarian(@RequestBody StudentDTO studentDTO){
         boolean success = userService.createLibrarian(studentDTO);
 
