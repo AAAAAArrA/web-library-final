@@ -28,6 +28,10 @@ public class Photo implements Serializable{
     @JsonIgnore
     @OneToMany(mappedBy = "photoId")
     private List<Book> photos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "photoId")
+    private List<EBook> ebookphotos;
 }
 
 

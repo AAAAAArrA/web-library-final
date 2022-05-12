@@ -21,9 +21,21 @@ public class EBook {
     private String name;
     private String author;
     private String description;
-    private String photo;
     private int releaseYear;
-    private String link;
+    private String type;
+    @Lob
+    private byte[] data;
+
+    public EBook(String name, String author, String description, int releaseYear, String type, byte[] data, Category category, Photo photoId) {
+        this.name = name;
+        this.author = author;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.type = type;
+        this.data = data;
+        this.category = category;
+        this.photoId = photoId;
+    }
 
 
     @ManyToOne
@@ -33,4 +45,9 @@ public class EBook {
     @JsonIgnore
     @OneToMany(mappedBy = "eBookId")
     private List<StatisticEBook> statisticEBooks;
+
+
+    @ManyToOne
+    @JoinColumn(name="photo_id")
+    private Photo photoId;
 }

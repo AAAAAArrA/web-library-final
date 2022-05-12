@@ -31,7 +31,6 @@ public class AdminController {
             return userService.deletedUserList();
         }
 
-
     //Выводит информацию об одном пользователе
     @GetMapping("/user/{id}") //✔
     public User getUser(@PathVariable("id") long id){
@@ -53,7 +52,6 @@ public class AdminController {
         return userService.getAdmins();
     }
 
-
     //Удаление пользователя
     @Transactional
     @DeleteMapping("/delete/{id}")//✔
@@ -61,12 +59,6 @@ public class AdminController {
         userService.deleteUser(id);
         return new ResponseEntity<String>("User deleted successfully", HttpStatus.OK);
     }
-    //Добавить одного нового пользователя
-//    @PostMapping("/add-student")
-//    public ResponseEntity<User> addStudent(@RequestBody User user){
-//        return new ResponseEntity<User>(userService.createStudent(user), HttpStatus.CREATED);
-//    }
-
 
     //Создание нового пользователя
     @Transactional

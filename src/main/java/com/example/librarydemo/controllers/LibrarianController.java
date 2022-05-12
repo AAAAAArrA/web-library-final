@@ -4,18 +4,17 @@ package com.example.librarydemo.controllers;
 import com.example.librarydemo.DTO.*;
 import com.example.librarydemo.enums.Role;
 import com.example.librarydemo.exceptions.CustomException;
-import com.example.librarydemo.models.Book;
-import com.example.librarydemo.models.Category;
-import com.example.librarydemo.models.Photo;
-import com.example.librarydemo.models.User;
+import com.example.librarydemo.models.*;
 import com.example.librarydemo.repository.CategoryRepository;
 import com.example.librarydemo.services.BookService;
+import com.example.librarydemo.services.EBookService;
 import com.example.librarydemo.services.TakenService;
 import com.example.librarydemo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -36,6 +35,9 @@ public class LibrarianController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private EBookService eBookService;
 
     @PostMapping("/addBook")  //✔
     public ResponseEntity addBook(@ModelAttribute BookDTO bookDTO) throws IOException {
@@ -76,7 +78,6 @@ public class LibrarianController {
 
         return ResponseEntity.ok(student);
     }
-
 
     @GetMapping("/book/{book_id}")    //✔
     public ResponseEntity<Book> getBook(@PathVariable("book_id") long id){
@@ -143,7 +144,6 @@ public class LibrarianController {
         return ResponseEntity.ok(userService.getStudents());
     }
 
-
     @PostMapping("/takeBook") //✔
     public ResponseEntity takeBook(@RequestBody TakenDTO book) throws ParseException, CustomException {
         int code = takenService.takeBook(book);
@@ -169,6 +169,50 @@ public class LibrarianController {
         return ResponseEntity.ok(takenService.getTakenHistory());
     }
 
+    @PostMapping("/upload")
+    public void uploadFile(@RequestParam MultipartFile file, @RequestParam String name, @RequestParam String author , @RequestParam String description, @RequestParam int releaseYear, @RequestParam String categoryName,  MultipartFile photoFile) {
+        try {
+            System.out.println("post upload worked");
+
+            eBookService.store(file, name, author, description, releaseYear, categoryName,photoFile);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @GetMapping("/eBooks")
+    public ResponseEntity<List<EBooksDTO> > getEBooks(){
+        return ResponseEntity.ok(eBookService.getEBooks());
+    }
+
+    @GetMapping("/eBooks/limit/{limit}")
+    public  ResponseEntity<List<EBooksDTO>> getEBookLimit(@PathVariable("limit") int limit){
+        return ResponseEntity.ok(eBookService.getEBookLimit(limit));
+    }
+
+    @GetMapping("/eBook/{bookId}")
+    public ResponseEntity<EBook> getEBookById(@PathVariable("bookId") long id){
+        return ResponseEntity.ok(eBookService.getEBookById(id));
+    }
+
+    @GetMapping("/eBook/{bookId}/download")
+    public ResponseEntity makeDownloadStatistic(@PathVariable("bookId") long bookId){
+        eBookService.makeDownloadStatistic(bookId);
+        return  ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @GetMapping("/eBook/{bookId}/view")
+    public ResponseEntity makeViewStatistic(@PathVariable("bookId") long bookId){
+        eBookService.makeViewedStatistic(bookId);
+        return  ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("eBook/{bookId}")
+    public ResponseEntity deleteEBook(@PathVariable("bookId") long bookId){
+        eBookService.deleteEBook(bookId);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 
 
 
