@@ -5,6 +5,7 @@ import com.example.librarydemo.DTO.LibrarianAdminDTO;
 import com.example.librarydemo.DTO.StudentDTO;
 import com.example.librarydemo.enums.Role;
 import com.example.librarydemo.enums.Status;
+import com.example.librarydemo.exceptions.CustomException;
 import com.example.librarydemo.models.User;
 import com.example.librarydemo.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,19 +38,15 @@ public class UserService {
     public List<User> getLibrarians(){
         return userRepository.getLibrarians();
     }
+
     public List<User> getAdmins(){
         return userRepository.getAdmins();
     }
-
-
-
-
 
     //Достает всю информацию об одном пользователе
     public User oneUser(long id){
         return userRepository.findById(id).get();
     }
-
 
     //Создание User
     public User createUser(User user){
@@ -57,8 +54,12 @@ public class UserService {
     }
 
     //Удаление user не зависимо от его роли
-    public void deleteUser(long id){
-        userRepository.deleteUser(id);
+    public void deleteUser(long id) throws CustomException{
+        if(userRepository.checkIfStudentHasBooks(id) == 0) {
+            userRepository.deleteUser(id);
+        }else{
+            throw new CustomException("Student Has taken Books");
+        }
     }
 
     public User getStudent(long id){

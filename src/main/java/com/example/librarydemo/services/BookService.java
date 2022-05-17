@@ -1,6 +1,7 @@
 package com.example.librarydemo.services;
 
 import com.example.librarydemo.DTO.BookDTO;
+import com.example.librarydemo.exceptions.CustomException;
 import com.example.librarydemo.models.Book;
 import com.example.librarydemo.models.Category;
 import com.example.librarydemo.models.Photo;
@@ -69,10 +70,16 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(long id){
-        String photoName = bookRepository.findById(id).get().getPhotoId().getName();
-        bookRepository.deleteBookById(id);
-        photoRepository.deletePhotoByName(photoName);
+    public void deleteBook(long id) throws CustomException{
+        if(bookRepository.checkIfBookWasTaken(id)==0){
+            String photoName = bookRepository.findById(id).get().getPhotoId().getName();
+            bookRepository.deleteBookById(id);
+            photoRepository.deletePhotoByName(photoName);
+        }else{
+            throw new CustomException("The book was taken");
+        }
+
+
     }
 
     public List<Book> getDeletedBooks(){

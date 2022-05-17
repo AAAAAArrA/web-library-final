@@ -53,6 +53,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value="UPDATE `usr` SET `enabled` = 0 , `email` = null WHERE `id` = ?", nativeQuery = true)
     void deleteUser(long id);
 
+    @Query(value="SELECT if(COUNT(*)>0,true,false) FROM `taken` WHERE `end_date` is null and `student_id` = ?", nativeQuery = true)
+    int checkIfStudentHasBooks(long id);
+
 
 
 

@@ -15,7 +15,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     @Query(value="SELECT * FROM `book` WHERE lower(`name`) = lower(?) and deleted = 0", nativeQuery = true)
     Book getBook(String name);
 
-    @Query(value="SELECT COUNT(id) FROM `book` and deleted = 0", nativeQuery = true)
+    @Query(value="SELECT COUNT(id) FROM `book` where deleted = 0", nativeQuery = true)
     Integer getBookQuantity();
 
     @Modifying
@@ -32,4 +32,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
 
     @Query(value="SELECT * FROM `book` WHERE `deleted` = 1", nativeQuery = true)
     List<Book> getDeletedBooks();
+
+    @Query(value="SELECT if(COUNT(*)>0, true, false ) FROM `book` WHERE `in_library` = 0 and `id` = ?", nativeQuery = true)
+    int checkIfBookWasTaken(long bookId);
 }

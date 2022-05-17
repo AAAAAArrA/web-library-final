@@ -61,14 +61,15 @@ public class TakenService {
         try {
             studentId = Integer.parseInt(book.getStudentInfo());
         } catch (NumberFormatException nfe) {
-            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
+            throw new CustomException("Entered not an id");
         }
 
         try {
             bookId = Integer.parseInt(book.getBookInfo());
         } catch (NumberFormatException nfe) {
-            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
+            throw new CustomException("Entered not an id");
         }
+
 
 
         if(bookRepository.findById(bookId).get() == null){
@@ -124,16 +125,17 @@ public class TakenService {
         long bookId;
         long studentId;
 
+
         try {
             studentId = Integer.parseInt(book.getStudentInfo());
         } catch (NumberFormatException nfe) {
-            studentId =  userRepository.getStudent(book.getStudentInfo()).getId();
+            throw new CustomException("Entered not an id");
         }
 
         try {
             bookId = Integer.parseInt(book.getBookInfo());
         } catch (NumberFormatException nfe) {
-            bookId =  bookRepository.getBook(book.getBookInfo()).getId();
+            throw new CustomException("Entered not an id");
         }
 
 
@@ -159,6 +161,9 @@ public class TakenService {
 
 
         Taken taken = takenRepository.getTakenBook(studentId, bookId);
+        System.out.println("fcvgbhjk");
+        System.out.println(CommonFunc.getCurrentDate());
+        System.out.println(taken.getStartDate());
         taken.setEndDate(CommonFunc.getCurrentDate());
 
         takenRepository.save(taken);
